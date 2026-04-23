@@ -1,48 +1,68 @@
 # Zip Finder Selection
 
-A simple and efficient Python script designed to create a ZIP archive from the currently selected files or folders in the macOS Finder. This script is optimized for use as a Raycast script but can also be run independently.
+A macOS Python script that creates a timestamped ZIP archive from whatever is currently selected in Finder — works as a Raycast script command or standalone CLI tool.
+
+---
 
 ## Features
 
-- **Finder Integration:** Uses AppleScript to dynamically fetch current selections from the macOS Finder.
-- **Robustness:** Handles files and directories with complex characters (including spaces and commas) by using a custom delimiter for AppleScript output parsing.
-- **Recursive Zipping:** Automatically includes all subdirectories and files within selected folders while maintaining the relative directory structure.
-- **Timestamped Archives:** Creates unique ZIP file names (e.g., `archive_20260318_143000.zip`) to prevent overwriting existing files.
-- **English Localization:** Fully localized comments, documentation, and user output for international usability.
+- **Finder integration** — reads selection via AppleScript; no file picker, no drag-and-drop
+- **Files and folders** — single files, multiple files, directories, or any mix
+- **Recursive** — entire folder trees are preserved with relative paths inside the archive
+- **Timestamped names** — `archive_20260424_143000.zip` saved next to the selected items; no overwrites
+- **Special characters** — custom `|||` delimiter in AppleScript prevents comma-in-filename parsing errors
+- **No dependencies** — stdlib only (`os`, `subprocess`, `zipfile`, `datetime`)
 
-## Prerequisites
+---
 
-- **macOS:** Requires macOS to interact with Finder via AppleScript.
-- **Python 3.6+:** The script uses standard libraries (`os`, `subprocess`, `zipfile`, `datetime`).
+## Requirements
+
+- macOS (AppleScript + Finder)
+- Python 3.6+
+
+---
 
 ## Usage
 
-### As a Raycast Script
-1.  Open Raycast and navigate to **Extensions**.
-2.  Add a new **Script Command**.
-3.  Point it to `main.py` or the directory containing the script.
-4.  Run "Zip Selected in Finder" from the Raycast command window.
+### Raycast (recommended)
 
-### Manually
-You can run the script from the terminal:
+1. Open Raycast → **Extensions** → **Script Commands**
+2. Add `main.py` as a new Script Command
+3. Select files or folders in Finder
+4. Run **"Zip Selected in Finder"** from Raycast
+
+### Terminal
+
 ```bash
+# Select files in Finder first, then:
 python3 main.py
 ```
-*Note: Make sure you have something selected in Finder before running.*
 
-## Code Structure
+---
 
-- `main.py`: The main entry point containing the logic for:
-  - Fetching selection paths via `osascript`.
-  - Creating and compressing the ZIP archive using `zipfile`.
-  - Handling errors and providing feedback to the user.
+## How It Works
 
-## Technical Details
+```
+Finder selection
+      ↓ AppleScript (osascript)
+  List of POSIX paths
+      ↓
+  zipfile.ZipFile (ZIP_DEFLATED)
+      ↓
+  archive_YYYYMMDD_HHMMSS.zip  →  same folder as selection
+```
 
-- **AppleScript Delimiters:** Used `AppleScript's text item delimiters` to ensure that paths are parsed correctly even if they contain special characters.
-- **PEP 8 Compliance:** The code follows Python's standard style guide for readability and maintainability.
-- **Type Hinting:** Includes type annotations for better IDE support and code clarity.
+Files are archived by basename; directories are walked recursively with paths relative to their parent, so the folder name is preserved inside the archive.
+
+---
 
 ## License
 
 MIT
+
+---
+
+## Author
+
+- GitHub: [Shipovmax](https://github.com/Shipovmax)
+- Email: shipov.max@icloud.com
