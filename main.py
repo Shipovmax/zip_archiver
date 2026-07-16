@@ -46,7 +46,8 @@ def get_finder_selection() -> List[str]:
         if not output:
             return []
         return [p.strip() for p in output.split(delimiter) if p.strip()]
-    except subprocess.CalledProcessError:
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError) as error:
+        print(f"Error reading Finder selection: {error}")
         return []
 
 
@@ -92,11 +93,11 @@ def create_archive(selected_paths: List[str]) -> None:
                             zipf.write(full_path, rel_path)
 
         print(f"Archive created: {zip_name}")
-    except Exception as error:
+    except (OSError, zipfile.BadZipFile) as error:
         print(f"Error creating archive: {error}")
 
 
-def main():
+def main() -> None:
     """Main execution point for the Raycast script."""
     selected_paths = get_finder_selection()
     create_archive(selected_paths)
