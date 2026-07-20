@@ -37,10 +37,7 @@ def get_finder_selection() -> List[str]:
     """
     try:
         proc = subprocess.run(
-            ["osascript", "-e", script],
-            capture_output=True,
-            text=True,
-            check=True
+            ["osascript", "-e", script], capture_output=True, text=True, check=True
         )
         output = proc.stdout.strip()
         if not output:
